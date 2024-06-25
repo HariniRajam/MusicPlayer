@@ -1,0 +1,459 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ASHIFY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height:95vh;
+            margin: 0;
+            background: linear-gradient(to bottom right, #3E3B3D, #7D5877);
+            color: #EAEAEA; /* Text color */
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #221E22;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 90vh;
+            overflow-y: scroll; /* Make the sidebar scrollable */
+        }
+        .main {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h2 {
+            margin-top: 0;
+            font-weight: 600;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #564D5C; /* Dark violet */
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        li:hover {
+            background-color: #756F77; /* Light violet */
+            transform: scale(1.05);
+        }
+        .controls, .playlist-controls {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+        }
+        button {
+            background: none;
+            border: none;
+            color: white; 
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            color: #7D5877; /* Violet */
+            transform: scale(1.1);
+        }
+        #playlistForm, #addToPlaylistForm {
+            display: none;
+            margin-top: 20px;
+            background-color: #2D2A2E;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #playlistForm input, #addToPlaylistForm select, #playlistForm select {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #564D5C;
+            border-radius: 5px;
+            background-color: #221E22;
+            color: #EAEAEA;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        #playlistForm input:focus, #addToPlaylistForm select:focus, #playlistForm select:focus {
+            border-color: #7D5877;
+            box-shadow: 0 0 5px rgba(125, 88, 119, 0.5);
+        }
+        .playlist-form-btn {
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #B31212;
+            color: #EAEAEA;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .playlist-form-btn:hover {
+            background-color: #7D5877;
+            transform: scale(1.05);
+        }
+        #audioPlayer {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .control-buttons button {
+            font-size: 2em;
+            margin: 0 20px;
+        }
+        .selected-playlist {
+            margin-top: 10px; /* Adjust the margin here */
+        }
+        .song-image {
+            width: 100%;
+            max-width: 200px; /* Adjust the maximum width here */
+            height: auto;
+            margin: 20px auto;
+            display: block;
+        }
+        .search-container {
+            margin-bottom: 10px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            
+            border-radius: 20px;
+            padding: 8px;
+        }
+
+        .search-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color:white;
+        }
+
+        .search-button i {
+            color: black;
+            font-size: 18px;
+        }
+
+        .search-button:hover i {
+            color: #333;
+        }
+        .search-input{
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #564D5C;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+            color: black;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        #songName {
+            color: #F8F8FF;  
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 10px;
+            text-transform: capitalize; /* Capitalize the first letter of each word */
+        }
+
+        .recently-played {
+            display: flex;
+            flex-direction: column-reverse; /* Reverse the order of child elements */
+            align-items: flex-start; /* Align child elements to the start (left) */
+        }
+        .recently-played div {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #playlistSongs {
+            cursor: pointer;
+            padding: 10px;
+            
+        }
+
+       
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div>
+        <br>
+        <div class="search-container">
+            <input class="search-input" type="text" id="searchInput" placeholder="Search songs...">
+            <button class="search-button" onclick='searchSongs()'>Search</button>
+            </div>
+            <br>
+            <h2>Songs</h2>
+            <ul class="song-list">
+                <li onclick="playSong('1.mpeg')">ANBAE PERANBAE</li>
+                <li onclick="playSong('2.mpeg')">MARUVARTHAI</li>
+                <li onclick="playSong('3.mpeg')">THULI THULI</li>
+                <li onclick="playSong('4.mpeg')">VIZHI MOODI</li>
+                <li onclick="playSong('5.mpeg')">VENMATHIYE</li>
+                <li onclick="playSong('6.mpeg')">KURUMUGIL</li>
+                <li onclick="playSong('7.mpeg')">PO INDRU NEEYAGA</li>
+                <li onclick="playSong('8.mpeg')">POONGATRILE</li>
+                <li onclick="playSong('9.mpeg')">MUZHUMADHI</li>
+
+            </ul>
+        </div>
+        <div>
+        <br>
+            <h2>Playlists</h2>
+            <ul class="playlist-list" id="playlistList"></ul>
+            <div class="playlist-controls">
+                <button onclick='showPlaylistForm()'>Create Playlist</button>
+                <button onclick='showAddToPlaylistForm()'>Add to Playlist</button>
+            </div>
+
+            <div id="playlistForm">
+                <h3>Create Playlist</h3>
+                <label for="playlistName">Playlist Name:</label>
+                <input type="text" id="playlistName" name="playlistName"><br><br>
+                <label for="songSelect">Select Songs:</label><br>
+                <select id="songSelect" multiple>
+                <option value="1.mpeg">ANBAE PERANBAE</option>
+                <option value="2.mpeg">MARUVARTHAI</option>
+                <option value="3.mpeg">THULI THULI</option>
+                <option value="4.mpeg">VIZHI MOODI</option>
+                <option value="5.mpeg">VENMATHIYE</option>
+                <option value="6.mpeg">KURUMUGIL</option>
+                <option value="7.mpeg">PO INDRU NEEYAGA</option>
+                <option value="8.mpeg">POONGATRILE</option>
+                <option value="9.mpeg">MUZHUMADHI</option>
+
+                </select><br><br>
+                <button onclick='createPlaylist()'>Create</button>
+            </div>
+            <div id="addToPlaylistForm">
+                <h3>Add to Playlist</h3>
+                <label for="existingPlaylist">Select Playlist:</label><br>
+                <select id="existingPlaylist">
+                    <!-- Options will be populated dynamically -->
+                </select><br><br>
+                <label for="addSongSelect">Select Songs:</label><br>
+                <select id="addSongSelect" multiple>
+                <option value="1.mpeg">ANBAE PERANBAE</option>
+                <option value="2.mpeg">MARUVARTHAI</option>
+                <option value="3.mpeg">THULI THULI</option>
+                <option value="4.mpeg">VIZHI MOODI</option>
+                <option value="5.mpeg">VENMATHIYE</option>
+                <option value="6.mpeg">KURUMUGIL</option>
+                <option value="7.mpeg">PO INDRU NEEYAGA</option>
+                <option value="8.mpeg">POONGATRILE</option>
+                <option value="9.mpeg">MUZHUMADHI</option>
+
+                </select><br><br>
+                <button onclick='addToPlaylist()'>Add</button>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <h1>ASHify</h1>
+        <img id="songImage" class="song-image" src="1.jpeg" alt="Song Image">
+        <div id="songName"></div>
+        <audio id="audioPlayer" controls>
+            <source id="audioSource" src="1.mpeg" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="control-buttons">
+            <button onclick='prevSong()'>&#9664;</button>
+            <button onclick='nextSong()'>&#9654;</button>
+        </div>
+        <br>
+        <hr>
+        <div id="playlistSongs" class="playlist-songs"></div>
+    </div>
+    <div class="sidebar">
+        <h2>Recently Played</h2>
+        <div id="recentlyPlayed" class="recently-played"></div>
+    </div>
+    <script>
+        var songs = ["1.mpeg", "2.mpeg", "3.mpeg", "4.mpeg", "5.mpeg", "6.mpeg", "7.mpeg", "8.mpeg", "9.mpeg"];
+        var images = ["1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg", "5.jpeg", "6.jpeg", "7.jpeg", "8.jpeg", "9.jpeg"];
+        var songNameMap = {
+            "1.mpeg": "ANBAE PERANBAE",
+            "2.mpeg": "MARUVARTHAI",
+            "3.mpeg": "THULI THULI",
+            "4.mpeg": "VIZHI MOODI",
+            "5.mpeg": "VENMATHIYE",
+            "6.mpeg": "KURUMUGIL",
+            "7.mpeg": "PO INDRU NEEYAGA",
+            "8.mpeg": "POONGATRILE",
+            "9.mpeg": "MUZHUMADHI"
+        };
+        var songImageMap = {
+            "1.mpeg": "1.jpeg",
+            "2.mpeg": "2.jpeg",
+            "3.mpeg": "3.jpeg",
+            "4.mpeg": "4.jpeg",
+            "5.mpeg": "5.jpeg",
+            "6.mpeg": "6.jpeg",
+            "7.mpeg": "7.jpeg",
+            "8.mpeg": "8.jpeg",
+            "9.mpeg": "9.jpeg"
+        };
+        var currentSongIndex = 0;
+        var playlists = {};
+        var playedSongs = new Set();
+
+        function playSong(song) {
+            var recentlyPlayed = document.getElementById('recentlyPlayed');
+            var audioPlayer = document.getElementById('audioPlayer');
+            var audioSource = document.getElementById('audioSource');
+            var songImage = document.getElementById('songImage');
+            var songNameElement = document.getElementById('songName');
+            audioSource.src = song;
+            songImage.src = songImageMap[song];
+            songNameElement.textContent = songNameMap[song];
+            audioPlayer.load();
+            audioPlayer.play();
+            currentSongIndex = songs.indexOf(song);
+            var div = document.createElement('div');
+            div.textContent = songNameMap[song];
+
+            if (playedSongs.has(song)) {
+                return;
+            }
+            recentlyPlayed.insertBefore(div, recentlyPlayed.firstChild);
+            playedSongs.add(song);
+            currentSongIndex = songs.indexOf(song);
+        }
+
+        function prevSong() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            playSong(songs[currentSongIndex]);
+        }
+
+        function nextSong() {
+            currentSongIndex = (currentSongIndex + 1) % songs.length
+                        playSong(songs[currentSongIndex]);
+        }
+
+        function showPlaylistForm() {
+            document.getElementById('playlistForm').style.display = 'block';
+            document.getElementById('addToPlaylistForm').style.display = 'none';
+        }
+
+        function showAddToPlaylistForm() {
+            document.getElementById('addToPlaylistForm').style.display = 'block';
+            document.getElementById('playlistForm').style.display = 'none';
+            populatePlaylists();
+        }
+
+        function createPlaylist() {
+            var playlistName = document.getElementById('playlistName').value;
+            var selectedSongs = Array.from(document.getElementById('songSelect').selectedOptions).map(option => option.value);
+            if (playlistName && selectedSongs.length > 0) {
+                playlists[playlistName] = selectedSongs;
+                document.getElementById('playlistForm').style.display = 'none';
+                updatePlaylistList();
+            } else {
+                alert('Please enter a playlist name and select at least one song.');
+            }
+        }
+
+        function addToPlaylist() {
+            var playlistName = document.getElementById('existingPlaylist').value;
+            var selectedSongs = Array.from(document.getElementById('addSongSelect').selectedOptions).map(option => option.value);
+            if (playlistName && selectedSongs.length > 0) {
+                playlists[playlistName] = playlists[playlistName].concat(selectedSongs);
+                document.getElementById('addToPlaylistForm').style.display = 'none';
+                updatePlaylistList();
+            } else {
+                alert('Please select a playlist and at least one song.');
+            }
+        }
+
+        function populatePlaylists() {
+            var existingPlaylistSelect = document.getElementById('existingPlaylist');
+            existingPlaylistSelect.innerHTML = '';
+            for (var playlistName in playlists) {
+                var option = document.createElement('option');
+                option.value = playlistName;
+                option.text = playlistName;
+                existingPlaylistSelect.appendChild(option);
+            }
+        }
+
+        function updatePlaylistList() {
+            var playlistList = document.getElementById('playlistList');
+            playlistList.innerHTML = '';
+            for (var playlistName in playlists) {
+                var li = document.createElement('li');
+                li.textContent = playlistName;
+                li.onclick = function() { playPlaylist(this.textContent); };
+                playlistList.appendChild(li);
+            }
+        }
+
+        function playPlaylist(playlistName) {
+            var selectedPlaylist = playlists[playlistName];
+            if (selectedPlaylist && selectedPlaylist.length > 0) {
+                currentSongIndex = 0;
+                songs = selectedPlaylist;
+                playSong(songs[currentSongIndex]);
+                displayPlaylistSongs(selectedPlaylist);
+            }
+        }
+
+        function displayPlaylistSongs(selectedPlaylist) {
+            var playlistSongs = document.getElementById('playlistSongs');
+            playlistSongs.innerHTML = ''; // Clear previous songs
+            selectedPlaylist.forEach(function(song, index) {
+                var div = document.createElement('div');
+                div.textContent = songNameMap[song];
+                console.log(songNameMap[song]);
+                div.className = 'playlist-song';
+                div.onclick = function() {
+                    currentSongIndex = index;
+                    playSong(song);
+                };
+                playlistSongs.appendChild(div);
+            });
+        }
+
+        function searchSongs() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById('searchInput');
+            filter = input.value.toUpperCase();
+            ul = document.querySelector('.song-list');
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
